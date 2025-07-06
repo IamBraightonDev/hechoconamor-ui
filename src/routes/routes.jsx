@@ -1,24 +1,28 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Layout from '../layout/Layout'
 import Dashboard from '../pages/dashboard/index'
+import DashboardVendedor from '../pages/dashboard/DashboardVendedor'
+import DashboardRoleBased from '../pages/dashboard/DashboardRoleBased'
 import Productos from '../pages/productos/index'
+import ProductosVendedor from '../pages/productos/ProductosVendedor'
 import EditarProducto from '../pages/productos/EditarProducto'
 import Ventas from '../pages/ventas/index'
+import VentasVendedor from '../pages/ventas/VentasVendedor'
 import Insumos from '../pages/insumos/index'
 import Produccion from '../pages/produccion/index'
 import Pedidos from '../pages/pedidos/index'
+import PedidosVendedor from '../pages/pedidos/PedidosVendedor'
 import Usuarios from '../pages/usuarios/index'
-import Reportes from '../pages/reportes'
+import Reportes from '../pages/reportes/index'
 import ReporteDetalle from '../pages/reportes/ReporteDetalle'
 import ReporteGeneral from '../pages/reportes/ReporteGeneral'
 import ReporteVentas from '../pages/reportes/ReporteVentas'
 import ReporteProduccion from '../pages/reportes/ReporteProduccion'
 import ReportePedidos from '../pages/reportes/ReportePedidos'
 import ReporteInventario from '../pages/reportes/ReporteInventario'
+import ReportesVendedor from '../pages/reportes/ReportesVendedor'
 import Login from '../pages/login/index'
-import RutaProtegida from '../routes/RutaProtegida'
-
-
+import RutaProtegida from './RutaProtegida'
 
 export const router = createBrowserRouter([
   {
@@ -33,10 +37,11 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <RutaProtegida rolesPermitidos={['administrador', 'vendedor']}>
-            <Dashboard />
+            <DashboardRoleBased />
           </RutaProtegida>
         )
       },
+      // Administrador
       {
         path: 'productos',
         element: (
@@ -56,7 +61,7 @@ export const router = createBrowserRouter([
       {
         path: 'ventas',
         element: (
-          <RutaProtegida rolesPermitidos={['administrador', 'vendedor']}>
+          <RutaProtegida rolesPermitidos={['administrador']}>
             <Ventas />
           </RutaProtegida>
         )
@@ -80,7 +85,7 @@ export const router = createBrowserRouter([
       {
         path: 'pedidos',
         element: (
-          <RutaProtegida rolesPermitidos={['administrador', 'vendedor']}>
+          <RutaProtegida rolesPermitidos={['administrador']}>
             <Pedidos />
           </RutaProtegida>
         )
@@ -96,7 +101,7 @@ export const router = createBrowserRouter([
       {
         path: 'reportes',
         element: (
-          <RutaProtegida rolesPermitidos={['administrador', 'vendedor']}>
+          <RutaProtegida rolesPermitidos={['administrador']}>
             <Reportes />
           </RutaProtegida>
         )
@@ -112,7 +117,7 @@ export const router = createBrowserRouter([
       {
         path: 'reportes/ventas',
         element: (
-          <RutaProtegida rolesPermitidos={['administrador', 'vendedor']}>
+          <RutaProtegida rolesPermitidos={['administrador']}>
             <ReporteVentas />
           </RutaProtegida>
         )
@@ -146,6 +151,40 @@ export const router = createBrowserRouter([
         element: (
           <RutaProtegida rolesPermitidos={['administrador']}>
             <ReporteDetalle />
+          </RutaProtegida>
+        )
+      },
+
+      // RUTAS DE VENDEDOR - CON COMPONENTES EXCLUSIVOS
+      {
+        path: 'productos-vendedor',
+        element: (
+          <RutaProtegida rolesPermitidos={['vendedor']}>
+            <ProductosVendedor />
+          </RutaProtegida>
+        )
+      },
+      {
+        path: 'ventas-vendedor',
+        element: (
+          <RutaProtegida rolesPermitidos={['vendedor']}>
+            <VentasVendedor />
+          </RutaProtegida>
+        )
+      },
+      {
+        path: 'pedidos-vendedor',
+        element: (
+          <RutaProtegida rolesPermitidos={['vendedor']}>
+            <PedidosVendedor />
+          </RutaProtegida>
+        )
+      },
+      {
+        path: 'reportes-vendedor',
+        element: (
+          <RutaProtegida rolesPermitidos={['vendedor']}>
+            <ReportesVendedor />
           </RutaProtegida>
         )
       }

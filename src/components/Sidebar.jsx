@@ -30,13 +30,14 @@ export default function Sidebar() {
     { name: 'Usuarios', path: '/usuarios', icon: <FaUsers /> },
   ]
 
-  const vendedorNavItems = [
-    { name: 'Dashboard', path: '/', icon: <FaHome /> },
-    { name: 'Productos', path: '/productos', icon: <FaBoxOpen /> },
-    { name: 'Pedidos', path: '/pedidos', icon: <FaClipboardList /> },
-    { name: 'Ventas', path: '/ventas', icon: <FaShoppingCart /> },
-    { name: 'Reportes', path: '/reportes', icon: <FaChartBar /> },
-  ]
+const vendedorNavItems = [
+  { name: 'Dashboard', path: '/', icon: <FaHome /> },
+  { name: 'Productos', path: '/productos-vendedor', icon: <FaBoxOpen /> },
+  { name: 'Pedidos', path: '/pedidos-vendedor', icon: <FaClipboardList /> },
+  { name: 'Ventas', path: '/ventas-vendedor', icon: <FaShoppingCart /> },
+  { name: 'Reportes', path: '/reportes-vendedor', icon: <FaChartBar /> },
+]
+
 
   const navItemsToRender =
     usuario?.rol === 'administrador'
