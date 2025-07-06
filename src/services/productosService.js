@@ -1,15 +1,31 @@
 // src/services/productosService.js
 
-const API_URL = 'https://rest-api-hechoconamor.onrender.com/api/v1/products' // Actualiza si tu backend tiene otra URL
+const API_URL = 'https://rest-api-hechoconamor.onrender.com/api/v1/products'
 
-export async function obtenerProductos() {
-  const res = await fetch(API_URL)
-  if (!res.ok) throw new Error('Error al obtener productos')
-  return res.json()
+export const obtenerProductos = async () => {
+  try {
+    const res = await fetch(API_URL)
+
+    if (res.status === 404) {
+      // Respuesta esperada cuando no hay productos
+      console.warn('La API respondió 404 porque no hay productos.')
+      return [] // devolvemos un array vacío
+    }
+
+    if (!res.ok) {
+      const mensaje = await res.text()
+      throw new Error(`Error ${res.status}: ${mensaje}`)
+    }
+
+    return await res.json()
+  } catch (error) {
+    console.error('Error en obtenerProductos:', error.message)
+    throw new Error('Error al obtener productos')
+  }
 }
 
 export async function obtenerProductoPorId(id) {
-  const res = await fetch(`${API_URL}/${id}`)
+  const res = await fetch(`${API_URL}/id/${id}`)
   if (!res.ok) throw new Error('Error al obtener producto')
   return res.json()
 }

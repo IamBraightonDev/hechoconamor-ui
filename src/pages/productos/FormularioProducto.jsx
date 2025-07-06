@@ -53,7 +53,7 @@ export default function FormularioProducto({
     e.preventDefault()
 
     const camposObligatorios = [
-      'name', 'description', 'price', 'imageUrl',
+      'name', 'description', 'price',
       'categoryId', 'colorId', 'materialId', 'sizeId', 'statusId',
     ]
 
@@ -64,11 +64,14 @@ export default function FormularioProducto({
       }
     }
 
+    // Si imageUrl está vacío, asignar imagen por defecto
+    const imagenFinal = nuevoProducto.imageUrl?.trim() || 'https://www.trapp.com.br/wp-content/uploads/2022/12/baixa-3.jpg'
+
     const productoFormateado = {
       name: nuevoProducto.name,
       description: nuevoProducto.description,
       price: parseFloat(nuevoProducto.price),
-      imageUrl: nuevoProducto.imageUrl,
+      imageUrl: imagenFinal,
       categoryId: parseInt(nuevoProducto.categoryId),
       colorId: parseInt(nuevoProducto.colorId),
       materialId: parseInt(nuevoProducto.materialId),
@@ -80,15 +83,6 @@ export default function FormularioProducto({
     try {
       await crearProducto(productoFormateado)
       toast.success('Producto agregado correctamente')
-
-      // Guardar imagen en localStorage para persistencia visual
-      const productosLocales = JSON.parse(localStorage.getItem('productosLocales') || '[]')
-      productosLocales.push({
-        id: Date.now(), // id temporal
-        ...productoFormateado
-      })
-      localStorage.setItem('productosLocales', JSON.stringify(productosLocales))
-
       onProductoCreado()
       cerrar()
     } catch (error) {
@@ -98,6 +92,8 @@ export default function FormularioProducto({
       setCargando(false)
     }
   }
+
+
 
   return (
     <motion.div

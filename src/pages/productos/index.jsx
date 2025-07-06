@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
-import { FaPlus, FaTh, FaList } from 'react-icons/fa'
+import { FaPlus, FaTh, FaList, FaTrash } from 'react-icons/fa'
 import TablaProductos from './TablaProductos'
+import VistaGaleria from './VistaGaleria'
 import FormularioProducto from './FormularioProducto'
 import ModalConfirmacion from './ModalConfirmacion'
+import EditarProducto from './EditarProducto'
 import {
   obtenerProductos,
   eliminarProducto,
@@ -13,6 +15,7 @@ import {
 export default function ProductosPage() {
   const [productos, setProductos] = useState([])
   const [mostrarFormulario, setMostrarFormulario] = useState(false)
+  const [idAEditar, setIdAEditar] = useState(null)
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false)
   const [idAEliminar, setIdAEliminar] = useState(null)
   const [busqueda, setBusqueda] = useState('')
@@ -31,15 +34,12 @@ export default function ProductosPage() {
     statusId: '',
   })
 
+  const imagenFallback = 'https://www.trapp.com.br/wp-content/uploads/2022/12/baixa-3.jpg'
+
   const cargarProductos = async () => {
     try {
       const data = await obtenerProductos()
-
-      // Combinar productos reales con los guardados localmente para mostrar imagenes
-      const locales = JSON.parse(localStorage.getItem('productosLocales') || '[]')
-      const todos = [...data, ...locales]
-
-      setProductos(todos)
+      setProductos(Array.isArray(data) ? data : [])
     } catch (error) {
       toast.error('Error al cargar productos')
       console.error(error)
@@ -57,12 +57,6 @@ export default function ProductosPage() {
       await eliminarProducto(idAEliminar)
       toast.success('Producto eliminado correctamente')
       setProductos(productos.filter((p) => p.id !== idAEliminar))
-
-      // También eliminar del localStorage si es local
-      const productosLocales = JSON.parse(localStorage.getItem('productosLocales') || '[]')
-      const nuevosLocales = productosLocales.filter((p) => p.id !== idAEliminar)
-      localStorage.setItem('productosLocales', JSON.stringify(nuevosLocales))
-
       setMostrarConfirmacion(false)
     } catch (error) {
       toast.error('Error al eliminar producto')
@@ -72,7 +66,6 @@ export default function ProductosPage() {
     }
   }
 
-  // Filtrado
   const productosFiltrados = productos
     .filter((p) =>
       p.name?.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -86,18 +79,17 @@ export default function ProductosPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h1 className="text-3xl font-bold text-pastelLavender">Productos</h1>
+        <h1 className="text-3xl font-bold text-pastelPink">Productos</h1>
         <div className="flex gap-2">
           <button
             onClick={() => setModoGaleria(!modoGaleria)}
-            className="bg-indigo-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-indigo-600"
+            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300"
           >
             {modoGaleria ? <FaList /> : <FaTh />}
-            {modoGaleria ? 'Ver Lista' : 'Ver Galería'}
           </button>
           <button
             onClick={() => setMostrarFormulario(true)}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-600"
+            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300"
           >
             <FaPlus /> Agregar
           </button>
@@ -118,61 +110,38 @@ export default function ProductosPage() {
           className="p-2 border rounded-lg"
         >
           <option value="Todos">Todos</option>
-          <option value="Disponible">Disponible</option>
-          <option value="Agotado">Agotado</option>
+          <option value="Activo">Activo</option>
+          <option value="No activo">No activo</option>
           <option value="Descontinuado">Descontinuado</option>
         </select>
       </div>
 
-      {/* Vista Galería o Tabla */}
-      {modoGaleria ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {productosFiltrados.map((prod) => (
-            <motion.div
-              key={prod.id}
-              className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 border"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="h-48 w-full bg-gray-200 overflow-hidden">
-                {prod.imageUrl ? (
-                  <img
-                    src={prod.imageUrl}
-                    alt={prod.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500">
-                    Sin imagen
-                  </div>
-                )}
-              </div>
-              <div className="p-4 space-y-2">
-                <h3 className="text-lg font-semibold">{prod.name}</h3>
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {prod.description}
-                </p>
-                <p className="text-green-600 font-bold">
-                  S/ {parseFloat(prod.price).toFixed(2)}
-                </p>
-                <span className="text-xs text-gray-500">
-                  Estado: {prod.status?.name || prod.status || 'N/A'}
-                </span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+      {cargando ? (
+        <p className="text-gray-500 text-center py-8">Cargando productos...</p>
+      ) : productosFiltrados.length === 0 ? (
+        <p className="text-gray-500 text-center py-8">No hay productos para mostrar.</p>
+      ) : modoGaleria ? (
+        <VistaGaleria
+          productos={productosFiltrados}
+          onEditar={(id) => setIdAEditar(id)}
+          onEliminar={(id) => {
+            setIdAEliminar(id)
+            setMostrarConfirmacion(true)
+          }}
+        />
       ) : (
         <TablaProductos
           productos={productos}
           busqueda={busqueda}
           filtro={filtro}
-          setIdAEliminar={setIdAEliminar}
-          setMostrarConfirmacion={setMostrarConfirmacion}
+          onEditar={(id) => setIdAEditar(id)}
+          onEliminar={(id) => {
+            setIdAEliminar(id)
+            setMostrarConfirmacion(true)
+          }}
         />
       )}
 
-      {/* Modal para crear nuevo producto */}
       <AnimatePresence>
         {mostrarFormulario && (
           <FormularioProducto
@@ -199,7 +168,19 @@ export default function ProductosPage() {
         )}
       </AnimatePresence>
 
-      {/* Modal de confirmación para eliminar */}
+      <AnimatePresence>
+        {idAEditar && (
+          <EditarProducto
+            idProducto={idAEditar}
+            onClose={() => setIdAEditar(null)}
+            onProductoActualizado={() => {
+              cargarProductos()
+              setIdAEditar(null)
+            }}
+          />
+        )}
+      </AnimatePresence>
+
       <AnimatePresence>
         {mostrarConfirmacion && (
           <ModalConfirmacion

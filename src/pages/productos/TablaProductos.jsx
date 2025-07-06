@@ -1,27 +1,30 @@
 import { FaEdit, FaTrash } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
 
 export default function TablaProductos({
   productos,
   busqueda,
   filtro,
-  setIdAEliminar,
-  setMostrarConfirmacion
+  onEditar,
+  onEliminar
 }) {
-  const productosFiltrados = productos.filter((prod) => {
-    const coincideBusqueda =
-      prod.name?.toLowerCase().includes(busqueda.toLowerCase()) ||
-      prod.category?.toLowerCase().includes(busqueda.toLowerCase())
+  const productosFiltrados = Array.isArray(productos)
+    ? productos.filter((prod) => {
+      const coincideBusqueda =
+        prod.name?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        prod.category?.toLowerCase().includes(busqueda.toLowerCase())
 
-    const coincideEstado = filtro === 'Todos' || prod.status === filtro
+      const coincideEstado = filtro === 'Todos' || prod.status === filtro
 
-    return coincideBusqueda && coincideEstado
-  })
+      return coincideBusqueda && coincideEstado
+    })
+    : []
+
+  const imagenFallback = 'https://www.trapp.com.br/wp-content/uploads/2022/12/baixa-3.jpg'
 
   return (
     <div className="overflow-x-auto shadow rounded-xl">
       <table className="min-w-full bg-white text-sm rounded-xl">
-        <thead className="bg-pastelLavender text-gray-700">
+        <thead className="bg-pastelPink text-gray-700">
           <tr>
             <th className="text-left px-4 py-3">Imagen</th>
             <th className="text-left px-4 py-3">ID</th>
@@ -38,12 +41,16 @@ export default function TablaProductos({
         </thead>
         <tbody>
           {productosFiltrados.map((prod) => (
-            <tr key={prod.id} className="border-b hover:bg-pastelMint transition">
+            <tr key={prod.id} className="border-b hover:bg-pink-100 transition">
               <td className="px-4 py-3">
                 <img
-                  src={prod.imageUrl || 'https://via.placeholder.com/50'}
+                  src={prod.imageUrl || imagenFallback}
                   alt={prod.name}
                   className="w-12 h-12 object-cover rounded shadow"
+                  onError={(e) => {
+                    e.target.onerror = null
+                    e.target.src = imagenFallback
+                  }}
                 />
               </td>
               <td className="px-4 py-3">{prod.id}</td>
@@ -55,22 +62,21 @@ export default function TablaProductos({
               <td className="px-4 py-3">{prod.material || 'Sin material'}</td>
               <td className="px-4 py-3">{prod.size || 'Sin tamaño'}</td>
               <td className="px-4 py-3">{prod.status || 'Sin estado'}</td>
-              <td className="px-4 py-3 text-center flex justify-center gap-3">
-                <Link
-                  to={`/productos/editar/${prod.id}`}
-                  className="text-blue-500 hover:text-blue-700"
-                >
-                  <FaEdit />
-                </Link>
-                <button
-                  className="text-red-500 hover:text-red-700"
-                  onClick={() => {
-                    setIdAEliminar(prod.id)
-                    setMostrarConfirmacion(true)
-                  }}
-                >
-                  <FaTrash />
-                </button>
+              <td className="px-4 py-3 text-center">
+                <div className="flex justify-center items-center gap-3 h-full">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    onClick={() => onEditar?.(prod.id)}
+                  >
+                    <FaEdit />
+                  </button>
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => onEliminar?.(prod.id)}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
