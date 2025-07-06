@@ -243,14 +243,14 @@ export default function EditarProducto({ idProducto, onClose, onProductoActualiz
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={cargando}
-            className="px-4 py-2 rounded-lg bg-pink-300 text-white hover:bg-pink-400 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-pink-300 text-gray-700 hover:bg-pink-400 disabled:opacity-50"
           >
             {cargando ? 'Guardando...' : 'Guardar Cambios'}
           </button>

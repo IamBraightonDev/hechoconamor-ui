@@ -42,38 +42,37 @@ export default function Sidebar() {
     usuario?.rol === 'administrador'
       ? adminNavItems
       : usuario?.rol === 'vendedor'
-      ? vendedorNavItems
-      : []
+        ? vendedorNavItems
+        : []
 
   return (
-<motion.div
-  onMouseEnter={() => setIsHovered(true)}
-  onMouseLeave={() => {
-    setIsHovered(false)
-    setMostrarTextoLogo(false) // Oculta el texto inmediatamente al colapsar
-  }}
-  animate={{ width: isHovered ? 240 : 80 }}
-  transition={{ duration: 0.15 }}
-  onAnimationComplete={() => {
-    if (isHovered) setMostrarTextoLogo(true)
-  }}
-  className="h-screen bg-gradient-to-b from-pastelPink to-pastelLavender shadow-lg flex flex-col overflow-hidden"
->
-
+    <motion.div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false)
+        setMostrarTextoLogo(false) // Oculta el texto inmediatamente al colapsar
+      }}
+      animate={{ width: isHovered ? 240 : 80 }}
+      transition={{ duration: 0.15 }}
+      onAnimationComplete={() => {
+        if (isHovered) setMostrarTextoLogo(true)
+      }}
+      className="h-screen bg-gradient-to-b from-pastelPink to-pastelLavender shadow-lg flex flex-col overflow-hidden"
+    >
 
       {/* Logo y texto */}
-<div className="flex items-center gap-2 p-4">
-  <img
-    src="https://i.imgur.com/VTQsnCI.png"
-    alt="Logo"
-    className="w-10 h-10 rounded-full shadow-md"
-  />
-  {mostrarTextoLogo && (
-    <h1 className="text-lg font-bold text-gray-800 transition-opacity duration-200">
-      Hecho con Amor
-    </h1>
-  )}
-</div>
+      <div className="flex items-center gap-2 p-4">
+        <img
+          src="https://i.imgur.com/VTQsnCI.png"
+          alt="Logo"
+          className="w-10 h-10 rounded-full shadow-md"
+        />
+        {mostrarTextoLogo && (
+          <h1 className="text-lg font-bold text-gray-800 transition-opacity duration-200">
+            Hecho con Amor
+          </h1>
+        )}
+      </div>
 
 
       {/* Navegación */}
@@ -82,11 +81,10 @@ export default function Sidebar() {
           <Link
             key={item.name}
             to={item.path}
-            className={`flex items-center gap-4 p-3 rounded-lg font-medium transition-all ${
-              location.pathname === item.path
-                ? 'bg-white text-pastelPink shadow-md'
-                : 'text-gray-700 hover:bg-pastelBlue hover:text-gray-900'
-            }`}
+            className={`flex items-center gap-4 p-3 rounded-lg font-medium transition-all ${location.pathname === item.path
+                ? 'bg-white text-pink-400 shadow-md'
+                : 'text-gray-800 hover:bg-pink-300 hover:text-gray-900'
+              }`}
           >
             <span className="text-xl">{item.icon}</span>
             {isHovered && <span className="text-sm">{item.name}</span>}

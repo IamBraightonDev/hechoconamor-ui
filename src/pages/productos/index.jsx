@@ -79,7 +79,7 @@ export default function ProductosPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h1 className="text-3xl font-bold text-pastelPink">Productos</h1>
+        <h1 className="text-3xl font-bold text-pink-300">🌺 Productos</h1>
         <div className="flex gap-2">
           <button
             onClick={() => setModoGaleria(!modoGaleria)}

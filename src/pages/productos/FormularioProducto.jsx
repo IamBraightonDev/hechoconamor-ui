@@ -106,7 +106,7 @@ export default function FormularioProducto({
         onSubmit={handleSubmit}
         className="bg-white rounded-xl shadow-xl p-6 w-full max-w-xl space-y-4 overflow-y-auto max-h-[90vh]"
       >
-        <h2 className="text-2xl font-bold">Agregar Producto</h2>
+        <h2 className="text-pink-300 text-2xl font-bold">Agregar Producto</h2>
 
         <input
           type="text"
@@ -226,14 +226,14 @@ export default function FormularioProducto({
           <button
             type="button"
             onClick={cerrar}
-            className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={cargando}
-            className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-pink-300 text-white hover:bg-pink-400 disabled:opacity-50"
           >
             {cargando ? 'Guardando...' : 'Guardar'}
           </button>
