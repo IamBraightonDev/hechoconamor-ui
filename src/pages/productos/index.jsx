@@ -83,13 +83,13 @@ export default function ProductosPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setModoGaleria(!modoGaleria)}
-            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300"
+            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300 hover:scale-125 hover:shadow-2xl transition-transform duration-300 ease-out"
           >
             {modoGaleria ? <FaList /> : <FaTh />}
           </button>
           <button
             onClick={() => setMostrarFormulario(true)}
-            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300"
+            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300 hover:scale-125 hover:shadow-2xl transition-transform duration-300 ease-out"
           >
             <FaPlus /> Agregar
           </button>

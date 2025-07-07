@@ -9,7 +9,7 @@ export default function VistaGaleria({ productos, onEditar, onEliminar }) {
         productos.map((producto) => (
           <div
             key={producto.id}
-            className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition border"
+            className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition border transform transition duration-300 hover:scale-105 hover:shadow-2xl"
           >
             <img
               src={producto.imageUrl?.trim() || imagenFallback}

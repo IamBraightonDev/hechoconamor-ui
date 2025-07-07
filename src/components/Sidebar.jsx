@@ -62,7 +62,7 @@ const vendedorNavItems = [
     >
 
       {/* Logo y texto */}
-      <div className="flex items-center gap-2 p-4">
+      <div className="flex items-center gap-2 p-4 hover:scale-105 hover:shadow-xl">
         <img
           src="https://i.imgur.com/VTQsnCI.png"
           alt="Logo"
@@ -83,8 +83,8 @@ const vendedorNavItems = [
             key={item.name}
             to={item.path}
             className={`flex items-center gap-4 p-3 rounded-lg font-medium transition-all ${location.pathname === item.path
-                ? 'bg-white text-pink-400 shadow-md'
-                : 'text-gray-800 hover:bg-pink-300 hover:text-gray-900'
+                ? 'bg-black text-pastelPink hover:scale-105 hover:shadow-xl transition shadow-md'
+                : 'text-gray-800 hover:bg-pink-300 hover:text-gray-900 hover:scale-105 hover:shadow-xl transition'
               }`}
           >
             <span className="text-xl">{item.icon}</span>

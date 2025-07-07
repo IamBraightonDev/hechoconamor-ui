@@ -21,14 +21,18 @@ export default function PedidosPage() {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false)
   const [idAEliminar, setIdAEliminar] = useState(null)
   const [busqueda, setBusqueda] = useState('')
-  const [filtro, setFiltro] = useState('Todos')
+  const [filtro, setFiltro] = useState('TODOS')
   const [modoGaleria, setModoGaleria] = useState(true)
   const [cargando, setCargando] = useState(false)
 
   const cargarPedidos = async () => {
     try {
       const data = await obtenerPedidos()
-      setPedidos(Array.isArray(data) ? data : [])
+      const pedidosOrdenados = Array.isArray(data)
+        ? data.sort((a, b) => b.id - a.id) // Orden descendente por ID
+        : []
+
+      setPedidos(pedidosOrdenados)
     } catch (error) {
       toast.error('Error al cargar pedidos')
       console.error(error)
@@ -45,7 +49,7 @@ export default function PedidosPage() {
     try {
       await eliminarPedido(idAEliminar)
       toast.success('Pedido eliminado correctamente')
-      setPedidos(pedidos.filter((p) => p.id !== idAEliminar))
+      setPedidos((prev) => prev.filter((p) => p.id !== idAEliminar))
       setMostrarConfirmacion(false)
     } catch (error) {
       toast.error('Error al eliminar pedido')
@@ -57,11 +61,11 @@ export default function PedidosPage() {
 
   const pedidosFiltrados = pedidos
     .filter((p) =>
-      p.cliente?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      p.clientNombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
       p.estado?.toLowerCase().includes(busqueda.toLowerCase())
     )
     .filter((p) => {
-      if (filtro === 'Todos') return true
+      if (filtro === 'TODOS') return true
       return p.estado === filtro
     })
 
@@ -72,13 +76,13 @@ export default function PedidosPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setModoGaleria(!modoGaleria)}
-            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300"
+            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300 hover:scale-125 hover:shadow-2xl transition-transform duration-300 ease-out"
           >
             {modoGaleria ? <FaList /> : <FaTh />}
           </button>
           <button
             onClick={() => setMostrarFormulario(true)}
-            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300"
+            className="bg-pastelPink text-black px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-300 hover:scale-110 hover:shadow-2xl transition-transform duration-300 ease-out"
           >
             <FaPlus /> Agregar
           </button>
@@ -98,11 +102,11 @@ export default function PedidosPage() {
           onChange={(e) => setFiltro(e.target.value)}
           className="p-2 border rounded-lg"
         >
-          <option value="Todos">Todos</option>
-          <option value="Pendiente">Pendiente</option>
-          <option value="Procesado">Procesado</option>
-          <option value="Entregado">Entregado</option>
-          <option value="Cancelado">Cancelado</option>
+          <option value="TODOS">Todos</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="EN_PROCESO">En proceso</option>
+          <option value="COMPLETADO">Completado</option>
+          <option value="CANCELADO">Cancelado</option>
         </select>
       </div>
 

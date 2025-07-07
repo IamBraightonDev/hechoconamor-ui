@@ -19,7 +19,7 @@ export default function Layout() {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div className="flex-1 flex flex-col bg-pastelCream overflow-y-auto">
+      <div className="flex-1 flex flex-col bg-patelCream overflow-y-auto">
         {/* Encabezado superior */}
         <div className="flex justify-between items-center px-6 py-4 border-b shadow bg-white">
           <div className="text-sm text-gray-600">

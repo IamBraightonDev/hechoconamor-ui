@@ -85,7 +85,7 @@ export default function Login() {
             <label className="block font-medium text-gray-700 text-sm">Correo electrónico</label>
             <input
               type="email"
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pastelPink"
+              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pastelPink hover:scale-105 transition-transform duration-300 ease-out"
               placeholder="ejemplo@gmail.com"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
@@ -97,7 +97,7 @@ export default function Login() {
             <label className="block font-medium text-gray-700 text-sm">Contraseña</label>
             <input
               type="password"
-              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pastelPink"
+              className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pastelPink hover:scale-105 transition-transform duration-300 ease-out"
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -106,12 +106,12 @@ export default function Login() {
           </div>
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
+          
           <motion.button
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full bg-pastelPink hover:bg-pastelBlue text-gray-800 font-semibold py-2 rounded-lg transition"
+            className="w-full bg-pastelPink hover:bg-pink-300 text-gray-800 font-semibold py-2 rounded-lg transition"
           >
             Iniciar sesión
           </motion.button>

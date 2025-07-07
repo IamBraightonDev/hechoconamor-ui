@@ -1,17 +1,28 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { toast } from 'react-toastify'
-import { obtenerPedidoPorId, actualizarPedido } from '../../services/pedido_service/pedidoService'
+import {
+  obtenerPedidoPorId,
+  actualizarPedido,
+  actualizarFechaEntrega
+} from '../../services/pedido_service/pedidoService'
 
 export default function EditarPedido({ idPedido, onClose, onPedidoActualizado }) {
-  const [pedido, setPedido] = useState(null)
+  const [estado, setEstado] = useState('')
+  const [fecha, setFecha] = useState('')
   const [cargando, setCargando] = useState(false)
 
   useEffect(() => {
     const cargarPedido = async () => {
       try {
         const data = await obtenerPedidoPorId(idPedido)
-        setPedido(data)
+        setEstado(data.estado || '')
+
+        if (data.fecha) {
+          const fechaLocal = new Date(data.fecha)
+          fechaLocal.setMinutes(fechaLocal.getMinutes() - fechaLocal.getTimezoneOffset())
+          setFecha(fechaLocal.toISOString().slice(0, 16)) // yyyy-MM-ddTHH:mm
+        }
       } catch (error) {
         toast.error('Error al cargar pedido')
         console.error(error)
@@ -21,34 +32,38 @@ export default function EditarPedido({ idPedido, onClose, onPedidoActualizado })
     if (idPedido) cargarPedido()
   }, [idPedido])
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setPedido({ ...pedido, [name]: value })
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!pedido.cliente || !pedido.fecha || !pedido.estado) {
-      toast.error('Todos los campos son obligatorios')
+    if (!estado) {
+      toast.error('Debe seleccionar un estado')
       return
     }
 
     setCargando(true)
     try {
-      await actualizarPedido(idPedido, pedido)
+      // Actualizar estado
+      await actualizarPedido(idPedido, estado)
+
+      // Actualizar fecha si fue proporcionada
+      if (fecha) {
+        // Quita la Z y los milisegundos para que sea compatible con LocalDateTime
+        const localDate = new Date(fecha)
+        localDate.setSeconds(0, 0)
+        const fechaSinZona = localDate.toISOString().split('.')[0] // "2025-07-06T20:36:00"
+        await actualizarFechaEntrega(idPedido, fechaSinZona)
+      }
+
       toast.success('Pedido actualizado correctamente')
       onPedidoActualizado()
       onClose()
     } catch (error) {
-      toast.error('Error al actualizar pedido')
+      toast.error(error.message || 'Error al actualizar pedido')
       console.error(error)
     } finally {
       setCargando(false)
     }
   }
-
-  if (!pedido) return null
 
   return (
     <motion.div
@@ -59,52 +74,46 @@ export default function EditarPedido({ idPedido, onClose, onPedidoActualizado })
     >
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-xl p-6 w-full max-w-lg space-y-4"
+        className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md space-y-4"
       >
-        <h2 className="text-2xl text-pink-300 font-bold">Editar Pedido</h2>
+        <h2 className="text-2xl font-bold text-pink-300">Editar Pedido</h2>
 
-        <input
-          type="text"
-          name="cliente"
-          placeholder="Nombre del cliente"
-          value={pedido.cliente}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-lg"
-        />
-
-        <input
-          type="date"
-          name="fecha"
-          value={pedido.fecha}
-          onChange={handleChange}
-          className="w-full p-2 border rounded-lg"
-        />
-
+        <label className="block text-sm font-medium text-gray-700">Estado del Pedido</label>
         <select
           name="estado"
-          value={pedido.estado}
-          onChange={handleChange}
+          value={estado}
+          onChange={(e) => setEstado(e.target.value)}
           className="w-full p-2 border rounded-lg"
+          required
         >
           <option value="">Seleccione estado</option>
-          <option value="Pendiente">Pendiente</option>
-          <option value="En proceso">En proceso</option>
-          <option value="Completado">Completado</option>
-          <option value="Cancelado">Cancelado</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="EN_PROCESO">En proceso</option>
+          <option value="COMPLETADO">Completado</option>
+          <option value="CANCELADO">Cancelado</option>
         </select>
 
-        <div className="flex justify-end gap-3">
+        <label className="block text-sm font-medium text-gray-700">Fecha de Entrega</label>
+        <input
+          type="datetime-local"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
+          className="w-full p-2 border rounded-lg"
+          step="60" // solo minutos, sin segundos
+        />
+
+        <div className="flex justify-end gap-3 pt-4">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400"
+            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transform transition duration-300 hover:scale-105 hover:shadow-2xl"
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={cargando}
-            className="px-4 py-2 rounded-lg bg-pink-300 text-white hover:bg-pink-500 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-pink-300 text-gray-700 hover:bg-pink-400 disabled:opacity-50 transform transition duration-300 hover:scale-105 hover:shadow-2xl"
           >
             {cargando ? 'Guardando...' : 'Guardar Cambios'}
           </button>
